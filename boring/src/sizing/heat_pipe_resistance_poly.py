@@ -9,6 +9,8 @@ Author: Ezra McNichols
         Turbomachinery and Turboelectric Systems
 """
 
+
+# Make the change to set t_wk, calculate D_v based on that.
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -24,7 +26,8 @@ L_eff=(L_evap+L_cond)/2+L_adiabatic
 t_w=0.0005
 t_wk=0.00069
 D_od=0.006
-D_v=0.00362
+r_h=D_od/2-t_w-t_wk
+D_v=r_h*2
 r_i=(D_od/2-t_w)
 A_cond=np.pi*D_od*L_cond
 A_evap=np.pi*D_od*L_evap
@@ -74,8 +77,8 @@ for Q_hp in range(10,50,1):
 
     ######################################## Axial Thermal Resistances ########################################################
     k_wk=(1-epsilon)*k_w+epsilon*k_l
-    R_aw=L_adiabatic/(A_w*k_w)
-    R_awk=L_adiabatic/(A_wk*k_wk)
+    R_aw=L_eff/(A_w*k_w)
+    R_awk=L_eff/(A_wk*k_wk)
     ######################################## Condenser Section Thermal Resistances ########################################################
     alpha=1           # Look into this, need better way to determine this rather than referencing papers.
     h_interc=2*alpha/(2-alpha)*(h_fg**2/(T_hp*v_fg))*np.sqrt(1/(2*np.pi*R_g*T_hp))*(1-P_v*v_fg/(2*h_fg))
@@ -88,7 +91,6 @@ for Q_hp in range(10,50,1):
     R_wke=np.log((r_i)/(D_v/2))/(2*np.pi*k_wk*L_evap)
     R_intere=1/(h_intere*A_intere)
     ######################################## Vapor Region Thermal Resistance ########################################################
-    r_h=D_v/2
     R_v=8*R_g*mu_v*T_hp**2/(np.pi*h_fg**2*P_v*rho_v)*(L_eff/(r_h**4))
     ######################################## Total Thermal Resistance ########################################################
     R_1=(R_wke+R_intere+R_v+R_interc+R_wkc)*R_awk/(R_wke+R_intere+R_v+R_interc+R_wkc+R_awk)
