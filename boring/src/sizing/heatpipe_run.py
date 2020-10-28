@@ -10,7 +10,6 @@ if __name__ == "__main__":
     nn = 1
 
 
-
     p.model.add_subsystem(name = 'size',
                           subsys = SizeComp(num_nodes=nn),
                           promotes_inputs=['L_evap', 'L_cond', 'L_adiabatic', 't_w', 't_wk', 'D_od', 'D_v'],
@@ -20,7 +19,7 @@ if __name__ == "__main__":
                           subsys = FluidPropertiesComp(num_nodes=nn),
                           promotes_inputs=['Q_hp', 'A_cond', 'h_c', 'T_coolant'],
                           # promotes_inputs=['A_cond'],
-                          promotes_outputs=['R_g', 'P_v', 'T_cond', 'T_hp', 'rho_v', 'mu_v', 'h_fg'])
+                          promotes_outputs=['T_cond', 'T_hp', 'T_hpfp', 'P_v', 'h_fg', 'rho_l','rho_v', 'mu_l', 'mu_v', 'k_l', 'k_v', 'sigma_l', 'cp_l', 'cp_v', 'v_fg', 'R_g'])
     
     p.model.add_subsystem(name = 'vapors',
                           subsys = VapThermResComp(num_nodes=nn),
@@ -43,11 +42,12 @@ p.set_val('T_coolant',293)
 
 
 p.run_model()
-
+p.check_partials(includes='fluids',method ='cs', compact_print=True,show_only_incorrect=False)
+p.check_partials(includes='size',method ='cs', compact_print=True,show_only_incorrect=False)
 print('Finished Successfully')
 
 print('\n', '\n')
 print('--------------Outputs---------------')
-print('The r_h Value is.......... ', p.get_val('r_h'))
-print('The R_v Value is.......... ', p.get_val('R_v'))
+# print('The r_h Value is.......... ', p.get_val('r_h'))
+# print('The R_v Value is.......... ', p.get_val('R_v'))
 print('\n', '\n')
